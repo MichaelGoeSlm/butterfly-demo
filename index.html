@@ -2,344 +2,202 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Butterfly Drift</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <style>
     :root {
-      --ink: #1b1a17;
-      --sky-1: #f6f1e7;
-      --sky-2: #d4e8f2;
-      --sky-3: #f9d8c6;
-      --leaf-1: #8ccf9a;
-      --leaf-2: #5a9f6f;
-      --glow: rgba(255, 255, 255, 0.6);
-      --monarch-orange: #f47a1f;
-      --monarch-orange-deep: #e45b1b;
-      --monarch-black: #1d1512;
-      --monarch-cream: #f7f2e9;
+      --bg: #ffffff;
+      --ant: #0b0b0b;
+      --ant-soft: #141414;
+      --ant-highlight: #1b1b1b;
     }
 
     * { box-sizing: border-box; }
 
-    body {
-      margin: 0;
-      height: 100vh;
-      overflow: hidden;
-      font-family: "Fraunces", "Georgia", serif;
-      color: var(--ink);
-      background:
-        radial-gradient(1200px 600px at 80% 10%, rgba(255,255,255,0.6), transparent 60%),
-        radial-gradient(900px 500px at 10% 80%, rgba(255,255,255,0.55), transparent 60%),
-        linear-gradient(135deg, var(--sky-1), var(--sky-2) 45%, var(--sky-3));
-    }
-
-    .grain {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      opacity: 0.2;
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="1"/></filter><rect width="160" height="160" filter="url(%23n)" opacity="0.25"/></svg>');
-      mix-blend-mode: soft-light;
-    }
-
-    .scene {
-      position: relative;
+    html, body {
       width: 100%;
       height: 100%;
+      margin: 0;
+      background: var(--bg);
+      overflow: hidden;
+      touch-action: none;
     }
 
-    .butterfly {
+    body {
+      display: block;
+    }
+
+    .ant {
       position: absolute;
-      width: 180px;
-      height: 140px;
-      transform-origin: center;
-      filter: drop-shadow(0 18px 22px rgba(0,0,0,0.24));
-      animation: bob 6s ease-in-out infinite;
+      width: 20px;
+      height: 14px;
+      left: 0;
+      top: 0;
+      transform-origin: 50% 50%;
       will-change: transform;
+      filter: drop-shadow(0 1px 1px rgba(0,0,0,0.25));
     }
 
-    .butterfly svg {
+    .ant svg {
       width: 100%;
       height: 100%;
       display: block;
     }
 
-    .wing {
+    .leg {
       transform-box: fill-box;
-      transform-origin: 100% 55%;
-      animation: flap-left 0.9s ease-in-out infinite;
+      transform-origin: 85% 15%;
+      animation: leg-swing 0.38s ease-in-out infinite;
     }
 
-    .wing.right {
-      transform-origin: 0% 55%;
-      animation: flap-right 0.9s ease-in-out infinite;
+    .leg.alt {
+      animation-delay: -0.19s;
     }
 
-    .wing .upper,
-    .wing .lower {
-      fill: url(#monarch-gradient);
-      stroke: var(--monarch-black);
-      stroke-width: 4;
-      stroke-linejoin: round;
+    .leg.mid {
+      animation-duration: 0.42s;
     }
 
-    .wing .lower {
-      fill: url(#monarch-gradient-deep);
+    .leg.rear {
+      animation-duration: 0.46s;
     }
 
-    .wing .vein {
-      fill: none;
-      stroke: rgba(26, 18, 15, 0.85);
-      stroke-width: 2.2;
-      stroke-linecap: round;
-    }
-
-    .wing .vein.thick {
-      stroke-width: 3.2;
-      stroke: rgba(26, 18, 15, 0.95);
-    }
-
-    .wing .spot {
-      fill: var(--monarch-cream);
-      opacity: 0.95;
-    }
-
-    .body-core {
-      fill: #231a17;
-    }
-
-    .body-highlight {
-      fill: #3a2a25;
+    @keyframes leg-swing {
+      0%, 100% { transform: rotate(6deg); }
+      50% { transform: rotate(-18deg); }
     }
 
     .antenna {
-      stroke: #1c1411;
-      stroke-width: 2.2;
-      stroke-linecap: round;
-      fill: none;
+      transform-origin: 0% 100%;
+      animation: antenna 0.8s ease-in-out infinite;
     }
 
-    .trail {
-      position: absolute;
-      inset: -40% -40% -40% -40%;
-      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.35), transparent 60%);
-      filter: blur(12px);
-      opacity: 0.4;
-      pointer-events: none;
-      animation: shimmer 5s ease-in-out infinite;
+    .antenna.alt {
+      animation-delay: -0.4s;
     }
 
-    .title {
-      position: absolute;
-      left: 6vw;
-      bottom: 6vh;
-      max-width: 320px;
-      padding: 18px 22px;
-      background: rgba(255,255,255,0.65);
-      backdrop-filter: blur(12px);
-      border-radius: 18px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.12);
-      line-height: 1.3;
-    }
-
-    .title h1 {
-      font-size: clamp(1.6rem, 2vw + 1rem, 2.5rem);
-      margin: 0 0 8px 0;
-      letter-spacing: 0.02em;
-    }
-
-    .title p {
-      margin: 0;
-      font-size: 0.95rem;
-      font-family: "Assistant", "Helvetica", sans-serif;
-    }
-
-    .leaf {
-      position: absolute;
-      width: 200px;
-      height: 200px;
-      background: radial-gradient(circle at 40% 40%, rgba(255,255,255,0.4), transparent 60%),
-        linear-gradient(140deg, var(--leaf-1), var(--leaf-2));
-      border-radius: 55% 45% 60% 40%;
-      opacity: 0.5;
-      filter: blur(2px);
-    }
-
-    .leaf.one { right: -40px; bottom: -20px; transform: rotate(25deg); }
-    .leaf.two { left: -80px; top: 10%; transform: rotate(-35deg); }
-
-    @keyframes flap-left {
-      0%, 100% { transform: translateX(10px) rotateY(0deg) rotateZ(2deg); }
-      50% { transform: translateX(0) rotateY(38deg) rotateZ(-6deg); }
-    }
-
-    @keyframes flap-right {
-      0%, 100% { transform: translateX(-10px) rotateY(0deg) rotateZ(-2deg); }
-      50% { transform: translateX(0) rotateY(-38deg) rotateZ(6deg); }
-    }
-
-    @keyframes bob {
-      0%, 100% { transform: translate3d(0, 0, 0) rotate(2deg); }
-      50% { transform: translate3d(0, -6px, 0) rotate(-2deg); }
-    }
-
-    @keyframes shimmer {
-      0%, 100% { opacity: 0.3; transform: scale(0.95); }
-      50% { opacity: 0.55; transform: scale(1.05); }
+    @keyframes antenna {
+      0%, 100% { transform: rotate(8deg); }
+      50% { transform: rotate(-10deg); }
     }
   </style>
 </head>
 <body>
-  <div class="scene" id="scene">
-    <div class="leaf one"></div>
-    <div class="leaf two"></div>
-    <div class="butterfly" id="butterfly">
-      <div class="trail"></div>
-      <svg viewBox="0 0 360 240" aria-hidden="true">
-        <defs>
-          <linearGradient id="monarch-gradient" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#f7941d" />
-            <stop offset="0.55" stop-color="#f4721f" />
-            <stop offset="1" stop-color="#e6581e" />
-          </linearGradient>
-          <linearGradient id="monarch-gradient-deep" x1="0" y1="1" x2="1" y2="0">
-            <stop offset="0" stop-color="#f16a1f" />
-            <stop offset="0.6" stop-color="#e85a1b" />
-            <stop offset="1" stop-color="#cc4f1e" />
-          </linearGradient>
-        </defs>
+  <div class="ant" id="ant" aria-hidden="true">
+    <svg viewBox="0 0 200 140" role="img">
+      <defs>
+        <radialGradient id="abdomenShade" cx="35%" cy="35%" r="70%">
+          <stop offset="0%" stop-color="#1b1b1b" />
+          <stop offset="60%" stop-color="#0f0f0f" />
+          <stop offset="100%" stop-color="#050505" />
+        </radialGradient>
+        <radialGradient id="thoraxShade" cx="40%" cy="40%" r="70%">
+          <stop offset="0%" stop-color="#1a1a1a" />
+          <stop offset="70%" stop-color="#0d0d0d" />
+          <stop offset="100%" stop-color="#060606" />
+        </radialGradient>
+      </defs>
 
-        <g class="wing left">
-          <g transform="translate(180 24)">
-            <path class="upper" d="M0,28 C-64,-24 -168,-8 -198,74 C-222,138 -172,184 -92,188 C-34,192 2,160 20,120 C36,86 30,46 0,28 Z" />
-            <path class="lower" d="M14,120 C-8,150 -66,212 -128,224 C-176,234 -208,204 -196,164 C-180,110 -130,96 -86,96 C-40,96 -8,106 14,120 Z" />
+      <g transform="translate(18 18)">
+        <g class="legs">
+          <path class="leg" d="M66 66 C40 50 22 42 6 38" fill="none" stroke="var(--ant)" stroke-width="6" stroke-linecap="round" />
+          <path class="leg alt mid" d="M72 70 C42 70 24 78 8 92" fill="none" stroke="var(--ant)" stroke-width="6" stroke-linecap="round" />
+          <path class="leg rear" d="M78 78 C50 98 34 112 18 126" fill="none" stroke="var(--ant)" stroke-width="6" stroke-linecap="round" />
 
-            <path class="vein thick" d="M-6,38 C-36,66 -60,98 -72,140" />
-            <path class="vein" d="M-18,56 C-64,64 -118,86 -146,116" />
-            <path class="vein" d="M-22,80 C-80,108 -120,144 -136,176" />
-            <path class="vein" d="M-10,100 C-44,130 -66,164 -78,196" />
-            <path class="vein" d="M-70,108 C-98,102 -132,110 -158,130" />
-            <path class="vein" d="M-34,128 C-44,154 -58,176 -72,202" />
-
-            <path class="vein" d="M-6,126 C-32,142 -64,170 -86,200" />
-            <path class="vein" d="M6,66 C-6,94 -16,128 -10,162" />
-
-            <circle class="spot" cx="-170" cy="76" r="6" />
-            <circle class="spot" cx="-186" cy="96" r="5" />
-            <circle class="spot" cx="-196" cy="120" r="5" />
-            <circle class="spot" cx="-190" cy="146" r="5" />
-            <circle class="spot" cx="-174" cy="168" r="6" />
-            <circle class="spot" cx="-150" cy="184" r="5" />
-            <circle class="spot" cx="-122" cy="194" r="4" />
+          <g transform="translate(140 12) scale(-1 1)">
+            <path class="leg alt" d="M66 66 C40 50 22 42 6 38" fill="none" stroke="var(--ant)" stroke-width="6" stroke-linecap="round" />
+            <path class="leg mid" d="M72 70 C42 70 24 78 8 92" fill="none" stroke="var(--ant)" stroke-width="6" stroke-linecap="round" />
+            <path class="leg alt rear" d="M78 78 C50 98 34 112 18 126" fill="none" stroke="var(--ant)" stroke-width="6" stroke-linecap="round" />
           </g>
         </g>
 
-        <g class="wing right">
-          <g transform="translate(180 24) scale(-1 1)">
-            <path class="upper" d="M0,28 C-64,-24 -168,-8 -198,74 C-222,138 -172,184 -92,188 C-34,192 2,160 20,120 C36,86 30,46 0,28 Z" />
-            <path class="lower" d="M14,120 C-8,150 -66,212 -128,224 C-176,234 -208,204 -196,164 C-180,110 -130,96 -86,96 C-40,96 -8,106 14,120 Z" />
+        <g class="body" transform="translate(40 8)">
+          <ellipse cx="34" cy="44" rx="26" ry="22" fill="var(--ant)" />
+          <ellipse cx="34" cy="44" rx="22" ry="18" fill="url(#thoraxShade)" opacity="0.9" />
 
-            <path class="vein thick" d="M-6,38 C-36,66 -60,98 -72,140" />
-            <path class="vein" d="M-18,56 C-64,64 -118,86 -146,116" />
-            <path class="vein" d="M-22,80 C-80,108 -120,144 -136,176" />
-            <path class="vein" d="M-10,100 C-44,130 -66,164 -78,196" />
-            <path class="vein" d="M-70,108 C-98,102 -132,110 -158,130" />
-            <path class="vein" d="M-34,128 C-44,154 -58,176 -72,202" />
+          <ellipse cx="86" cy="36" rx="20" ry="18" fill="var(--ant)" />
+          <ellipse cx="86" cy="36" rx="16" ry="14" fill="var(--ant-soft)" />
 
-            <path class="vein" d="M-6,126 C-32,142 -64,170 -86,200" />
-            <path class="vein" d="M6,66 C-6,94 -16,128 -10,162" />
+          <ellipse cx="136" cy="56" rx="40" ry="30" fill="url(#abdomenShade)" />
+          <ellipse cx="136" cy="56" rx="34" ry="25" fill="var(--ant-soft)" opacity="0.35" />
+          <path d="M106 40 C120 30 150 30 168 44" fill="none" stroke="var(--ant-highlight)" stroke-width="6" stroke-linecap="round" opacity="0.45" />
+          <path d="M108 58 C124 48 152 50 172 66" fill="none" stroke="var(--ant-highlight)" stroke-width="6" stroke-linecap="round" opacity="0.35" />
 
-            <circle class="spot" cx="-170" cy="76" r="6" />
-            <circle class="spot" cx="-186" cy="96" r="5" />
-            <circle class="spot" cx="-196" cy="120" r="5" />
-            <circle class="spot" cx="-190" cy="146" r="5" />
-            <circle class="spot" cx="-174" cy="168" r="6" />
-            <circle class="spot" cx="-150" cy="184" r="5" />
-            <circle class="spot" cx="-122" cy="194" r="4" />
+          <circle cx="74" cy="24" r="4" fill="var(--ant-highlight)" />
+          <circle cx="94" cy="24" r="4" fill="var(--ant-highlight)" />
+
+          <g transform="translate(64 6)">
+            <path class="antenna" d="M10 20 C0 6 -6 -6 -14 -18" fill="none" stroke="var(--ant)" stroke-width="4" stroke-linecap="round" />
+            <path class="antenna alt" d="M22 20 C36 8 42 -2 52 -18" fill="none" stroke="var(--ant)" stroke-width="4" stroke-linecap="round" />
+            <circle cx="-14" cy="-18" r="3" fill="var(--ant)" />
+            <circle cx="52" cy="-18" r="3" fill="var(--ant)" />
           </g>
         </g>
-
-        <g transform="translate(180 36)">
-          <path class="body-core" d="M-6,10 C-10,28 -12,52 -10,80 C-8,116 -6,148 0,178 C6,148 8,116 10,80 C12,52 10,28 6,10 C4,2 2,-4 0,-8 C-2,-4 -4,2 -6,10 Z" />
-          <path class="body-highlight" d="M-2,24 C-4,48 -4,72 -2,106 C0,136 2,152 4,164 C6,144 6,128 6,104 C6,74 4,46 2,26 C2,22 0,20 -2,24 Z" opacity="0.5" />
-          <circle cx="0" cy="-12" r="9" fill="#1a1412" />
-          <circle cx="0" cy="-12" r="5" fill="#2a1d1a" />
-          <path class="antenna" d="M-4,-18 C-18,-28 -30,-46 -38,-68" />
-          <path class="antenna" d="M4,-18 C18,-28 30,-46 38,-68" />
-          <circle cx="-38" cy="-68" r="3" fill="#1a1412" />
-          <circle cx="38" cy="-68" r="3" fill="#1a1412" />
-        </g>
-      </svg>
-    </div>
-    <div class="title">
-      <h1>Butterfly Drift</h1>
-      <p>A soft, wandering flight through a warm spring sky.</p>
-    </div>
+      </g>
+    </svg>
   </div>
-  <div class="grain"></div>
 
   <script>
-    const butterfly = document.getElementById('butterfly');
-    const scene = document.getElementById('scene');
+    const ant = document.getElementById('ant');
 
     const state = {
-      x: window.innerWidth * 0.4,
-      y: window.innerHeight * 0.4,
-      vx: 0,
-      vy: 0,
-      t: 0,
-      target: { x: window.innerWidth * 0.6, y: window.innerHeight * 0.4 },
-      lastTarget: 0,
-      maxSpeed: 120
+      x: window.innerWidth * 0.5,
+      y: window.innerHeight * 0.5,
+      angle: 0,
+      speed: 20,
+      targetAngle: 0,
+      pauseUntil: 0,
+      nextDecision: 0
     };
 
-    function pickTarget() {
-      const padding = 80;
-      state.target.x = padding + Math.random() * (window.innerWidth - padding * 2);
-      state.target.y = padding + Math.random() * (window.innerHeight - padding * 2);
-      state.lastTarget = performance.now();
+    function rand(min, max) {
+      return min + Math.random() * (max - min);
+    }
+
+    function pickDirection() {
+      state.targetAngle = rand(-Math.PI, Math.PI);
+      state.nextDecision = performance.now() + rand(700, 2200);
+      state.speed = rand(16, 34);
+      if (Math.random() < 0.18) {
+        state.pauseUntil = performance.now() + rand(300, 1000);
+      }
+    }
+
+    function clampPosition() {
+      const pad = 12;
+      state.x = Math.max(pad, Math.min(window.innerWidth - pad, state.x));
+      state.y = Math.max(pad, Math.min(window.innerHeight - pad, state.y));
     }
 
     function step(time) {
-      const dt = Math.min(0.03, (time - state.t) / 1000 || 0.016);
-      state.t = time;
-
-      if (time - state.lastTarget > 1400 + Math.random() * 1800) {
-        pickTarget();
+      if (time > state.nextDecision) {
+        pickDirection();
       }
 
-      const dx = state.target.x - state.x;
-      const dy = state.target.y - state.y;
-      const dist = Math.hypot(dx, dy) || 1;
+      if (time > state.pauseUntil) {
+        const angleDiff = ((state.targetAngle - state.angle + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
+        state.angle += angleDiff * 0.08;
 
-      const desiredVx = (dx / dist) * state.maxSpeed;
-      const desiredVy = (dy / dist) * state.maxSpeed;
+        state.x += Math.cos(state.angle) * state.speed * 0.016;
+        state.y += Math.sin(state.angle) * state.speed * 0.016;
+      }
 
-      const ease = 0.04 + Math.random() * 0.02;
-      state.vx += (desiredVx - state.vx) * ease;
-      state.vy += (desiredVy - state.vy) * ease;
+      if (state.x <= 12 || state.x >= window.innerWidth - 12 || state.y <= 12 || state.y >= window.innerHeight - 12) {
+        state.targetAngle += Math.PI * 0.8;
+      }
 
-      const drift = Math.sin(time / 400) * 14;
-      const sway = Math.cos(time / 600) * 12;
+      clampPosition();
 
-      state.x += (state.vx + drift) * dt;
-      state.y += (state.vy + sway) * dt;
-
-      const tilt = Math.atan2(state.vy, state.vx) * (180 / Math.PI);
-      const flapBoost = Math.sin(time / 180) * 6;
-
-      butterfly.style.transform = `translate3d(${state.x}px, ${state.y}px, 0) rotate(${tilt + flapBoost}deg)`;
+      const rotateDeg = state.angle * (180 / Math.PI);
+      ant.style.transform = `translate3d(${state.x}px, ${state.y}px, 0) rotate(${rotateDeg}deg)`;
 
       requestAnimationFrame(step);
     }
 
     window.addEventListener('resize', () => {
-      state.x = Math.min(state.x, window.innerWidth - 180);
-      state.y = Math.min(state.y, window.innerHeight - 140);
-      pickTarget();
+      clampPosition();
     });
 
-    pickTarget();
+    pickDirection();
     requestAnimationFrame(step);
   </script>
 </body>
