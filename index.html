@@ -13,6 +13,10 @@
       --leaf-1: #8ccf9a;
       --leaf-2: #5a9f6f;
       --glow: rgba(255, 255, 255, 0.6);
+      --monarch-orange: #f47a1f;
+      --monarch-orange-deep: #e45b1b;
+      --monarch-black: #1d1512;
+      --monarch-cream: #f7f2e9;
     }
 
     * { box-sizing: border-box; }
@@ -46,73 +50,73 @@
 
     .butterfly {
       position: absolute;
-      width: 120px;
-      height: 100px;
+      width: 180px;
+      height: 140px;
       transform-origin: center;
-      filter: drop-shadow(0 14px 20px rgba(0,0,0,0.2));
+      filter: drop-shadow(0 18px 22px rgba(0,0,0,0.24));
       animation: bob 6s ease-in-out infinite;
       will-change: transform;
     }
 
-    .body {
-      position: absolute;
-      left: 50%;
-      top: 22%;
-      width: 18px;
-      height: 62px;
-      background: linear-gradient(180deg, #4b3b2f, #1f1a17 70%);
-      border-radius: 20px;
-      transform: translateX(-50%);
-      z-index: 3;
+    .butterfly svg {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
-
-    .body::before,
-    .body::after {
-      content: "";
-      position: absolute;
-      top: -10px;
-      width: 22px;
-      height: 30px;
-      border: 2px solid #2c2623;
-      border-bottom: none;
-      border-radius: 50% 50% 0 0;
-    }
-
-    .body::before { left: -20px; transform: rotate(-18deg); }
-    .body::after { right: -20px; transform: rotate(18deg); }
 
     .wing {
-      position: absolute;
-      width: 70px;
-      height: 90px;
-      top: 5px;
-      border-radius: 60% 40% 60% 40%;
-      transform-origin: 100% 60%;
-      background:
-        radial-gradient(40px 40px at 70% 40%, rgba(255,255,255,0.6), transparent 60%),
-        radial-gradient(55px 40px at 40% 65%, rgba(255,255,255,0.35), transparent 60%),
-        linear-gradient(140deg, #ffb347, #ff6f91 45%, #845ec2 80%);
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+      transform-box: fill-box;
+      transform-origin: 100% 55%;
       animation: flap-left 0.9s ease-in-out infinite;
     }
 
     .wing.right {
-      right: 5px;
-      transform-origin: 0% 60%;
-      background:
-        radial-gradient(40px 40px at 30% 40%, rgba(255,255,255,0.55), transparent 60%),
-        radial-gradient(55px 40px at 60% 65%, rgba(255,255,255,0.35), transparent 60%),
-        linear-gradient(220deg, #ffd56b, #ff8fab 50%, #6b8ee6 80%);
+      transform-origin: 0% 55%;
       animation: flap-right 0.9s ease-in-out infinite;
     }
 
-    .wing::after {
-      content: "";
-      position: absolute;
-      inset: 8px 10px 18px 12px;
-      border-radius: 50% 40% 55% 45%;
-      border: 1px solid rgba(255,255,255,0.45);
-      opacity: 0.8;
+    .wing .upper,
+    .wing .lower {
+      fill: url(#monarch-gradient);
+      stroke: var(--monarch-black);
+      stroke-width: 4;
+      stroke-linejoin: round;
+    }
+
+    .wing .lower {
+      fill: url(#monarch-gradient-deep);
+    }
+
+    .wing .vein {
+      fill: none;
+      stroke: rgba(26, 18, 15, 0.85);
+      stroke-width: 2.2;
+      stroke-linecap: round;
+    }
+
+    .wing .vein.thick {
+      stroke-width: 3.2;
+      stroke: rgba(26, 18, 15, 0.95);
+    }
+
+    .wing .spot {
+      fill: var(--monarch-cream);
+      opacity: 0.95;
+    }
+
+    .body-core {
+      fill: #231a17;
+    }
+
+    .body-highlight {
+      fill: #3a2a25;
+    }
+
+    .antenna {
+      stroke: #1c1411;
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      fill: none;
     }
 
     .trail {
@@ -166,12 +170,12 @@
 
     @keyframes flap-left {
       0%, 100% { transform: translateX(10px) rotateY(0deg) rotateZ(2deg); }
-      50% { transform: translateX(0) rotateY(35deg) rotateZ(-6deg); }
+      50% { transform: translateX(0) rotateY(38deg) rotateZ(-6deg); }
     }
 
     @keyframes flap-right {
       0%, 100% { transform: translateX(-10px) rotateY(0deg) rotateZ(-2deg); }
-      50% { transform: translateX(0) rotateY(-35deg) rotateZ(6deg); }
+      50% { transform: translateX(0) rotateY(-38deg) rotateZ(6deg); }
     }
 
     @keyframes bob {
@@ -191,9 +195,81 @@
     <div class="leaf two"></div>
     <div class="butterfly" id="butterfly">
       <div class="trail"></div>
-      <div class="wing left"></div>
-      <div class="wing right"></div>
-      <div class="body"></div>
+      <svg viewBox="0 0 360 240" aria-hidden="true">
+        <defs>
+          <linearGradient id="monarch-gradient" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#f7941d" />
+            <stop offset="0.55" stop-color="#f4721f" />
+            <stop offset="1" stop-color="#e6581e" />
+          </linearGradient>
+          <linearGradient id="monarch-gradient-deep" x1="0" y1="1" x2="1" y2="0">
+            <stop offset="0" stop-color="#f16a1f" />
+            <stop offset="0.6" stop-color="#e85a1b" />
+            <stop offset="1" stop-color="#cc4f1e" />
+          </linearGradient>
+        </defs>
+
+        <g class="wing left">
+          <g transform="translate(180 24)">
+            <path class="upper" d="M0,28 C-64,-24 -168,-8 -198,74 C-222,138 -172,184 -92,188 C-34,192 2,160 20,120 C36,86 30,46 0,28 Z" />
+            <path class="lower" d="M14,120 C-8,150 -66,212 -128,224 C-176,234 -208,204 -196,164 C-180,110 -130,96 -86,96 C-40,96 -8,106 14,120 Z" />
+
+            <path class="vein thick" d="M-6,38 C-36,66 -60,98 -72,140" />
+            <path class="vein" d="M-18,56 C-64,64 -118,86 -146,116" />
+            <path class="vein" d="M-22,80 C-80,108 -120,144 -136,176" />
+            <path class="vein" d="M-10,100 C-44,130 -66,164 -78,196" />
+            <path class="vein" d="M-70,108 C-98,102 -132,110 -158,130" />
+            <path class="vein" d="M-34,128 C-44,154 -58,176 -72,202" />
+
+            <path class="vein" d="M-6,126 C-32,142 -64,170 -86,200" />
+            <path class="vein" d="M6,66 C-6,94 -16,128 -10,162" />
+
+            <circle class="spot" cx="-170" cy="76" r="6" />
+            <circle class="spot" cx="-186" cy="96" r="5" />
+            <circle class="spot" cx="-196" cy="120" r="5" />
+            <circle class="spot" cx="-190" cy="146" r="5" />
+            <circle class="spot" cx="-174" cy="168" r="6" />
+            <circle class="spot" cx="-150" cy="184" r="5" />
+            <circle class="spot" cx="-122" cy="194" r="4" />
+          </g>
+        </g>
+
+        <g class="wing right">
+          <g transform="translate(180 24) scale(-1 1)">
+            <path class="upper" d="M0,28 C-64,-24 -168,-8 -198,74 C-222,138 -172,184 -92,188 C-34,192 2,160 20,120 C36,86 30,46 0,28 Z" />
+            <path class="lower" d="M14,120 C-8,150 -66,212 -128,224 C-176,234 -208,204 -196,164 C-180,110 -130,96 -86,96 C-40,96 -8,106 14,120 Z" />
+
+            <path class="vein thick" d="M-6,38 C-36,66 -60,98 -72,140" />
+            <path class="vein" d="M-18,56 C-64,64 -118,86 -146,116" />
+            <path class="vein" d="M-22,80 C-80,108 -120,144 -136,176" />
+            <path class="vein" d="M-10,100 C-44,130 -66,164 -78,196" />
+            <path class="vein" d="M-70,108 C-98,102 -132,110 -158,130" />
+            <path class="vein" d="M-34,128 C-44,154 -58,176 -72,202" />
+
+            <path class="vein" d="M-6,126 C-32,142 -64,170 -86,200" />
+            <path class="vein" d="M6,66 C-6,94 -16,128 -10,162" />
+
+            <circle class="spot" cx="-170" cy="76" r="6" />
+            <circle class="spot" cx="-186" cy="96" r="5" />
+            <circle class="spot" cx="-196" cy="120" r="5" />
+            <circle class="spot" cx="-190" cy="146" r="5" />
+            <circle class="spot" cx="-174" cy="168" r="6" />
+            <circle class="spot" cx="-150" cy="184" r="5" />
+            <circle class="spot" cx="-122" cy="194" r="4" />
+          </g>
+        </g>
+
+        <g transform="translate(180 36)">
+          <path class="body-core" d="M-6,10 C-10,28 -12,52 -10,80 C-8,116 -6,148 0,178 C6,148 8,116 10,80 C12,52 10,28 6,10 C4,2 2,-4 0,-8 C-2,-4 -4,2 -6,10 Z" />
+          <path class="body-highlight" d="M-2,24 C-4,48 -4,72 -2,106 C0,136 2,152 4,164 C6,144 6,128 6,104 C6,74 4,46 2,26 C2,22 0,20 -2,24 Z" opacity="0.5" />
+          <circle cx="0" cy="-12" r="9" fill="#1a1412" />
+          <circle cx="0" cy="-12" r="5" fill="#2a1d1a" />
+          <path class="antenna" d="M-4,-18 C-18,-28 -30,-46 -38,-68" />
+          <path class="antenna" d="M4,-18 C18,-28 30,-46 38,-68" />
+          <circle cx="-38" cy="-68" r="3" fill="#1a1412" />
+          <circle cx="38" cy="-68" r="3" fill="#1a1412" />
+        </g>
+      </svg>
     </div>
     <div class="title">
       <h1>Butterfly Drift</h1>
@@ -258,8 +334,8 @@
     }
 
     window.addEventListener('resize', () => {
-      state.x = Math.min(state.x, window.innerWidth - 120);
-      state.y = Math.min(state.y, window.innerHeight - 100);
+      state.x = Math.min(state.x, window.innerWidth - 180);
+      state.y = Math.min(state.y, window.innerHeight - 140);
       pickTarget();
     });
 
